@@ -1,0 +1,1507 @@
+                                                                
+
+                                                                  SPRING
+
+
+                                                               without spring 
+              Triangle.java
+
+package com.test;
+
+public class Triangle 
+{
+  
+	public void draw(){
+		System.out.println("Triangle draw ");
+	}
+	 
+}
+
+
+package com.test;
+
+public class TestApp {
+  public static void main(String[] args) {
+	
+	 Triangle obj = new Triangle(); // spring is not used
+	  
+	  
+	  
+	  obj.draw();
+	  
+	  
+}
+}
+output:Triangle draw
+
+=====================================================================================================================================
+                                                   using spring--application context
+
+           Triangle.java
+
+package com.test;
+
+public class Triangle 
+{
+  
+	public void draw(){
+		System.out.println("Triangle draw ");
+	}
+	 
+}
+
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+  public static void main(String[] args) {
+	
+	 //Triangle obj = new Triangle(); spring is not used
+	  ApplicationContext ctx = new ClassPathXmlApplicationContext("spring.xml");
+	  
+	  Triangle obj = (Triangle)ctx.getBean("triangle");//id which is given 
+	  obj.draw();
+	  
+	  
+}
+}
+
+
+      spring.xml
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+<bean id="triangle" class="com.test.Triangle">
+</bean>
+	 
+</beans>
+
+
+output:
+Triangle draw 
+
+==================================================================================================================================================
+
+                                                 creating a object with name(if name is given it takes null)
+        Triangle.java   
+
+package com.test;
+
+public class Triangle 
+{
+    private String name;
+    
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void draw(){
+		System.out.println("Triangle draw "+name);
+	}
+	 
+}
+
+
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+  public static void main(String[] args) {
+	
+	 //Triangle obj = new Triangle(); spring is not used
+	  ApplicationContext ctx = new ClassPathXmlApplicationContext("spring.xml");
+	  
+	  Triangle obj = (Triangle)ctx.getBean("triangle");//id which is given 
+	  
+	  obj.setName("Equilateral triangle");
+	  obj.draw();
+	  
+	  
+	  
+}
+}
+
+
+spring is same
+
+output:
+Triangle draw Equilateral triangle
+
+===============================================================================================================================
+                       
+                                        injecting values in bean instead of hardcoding it in test and testapp
+                                               (setter injection)
+
+     Triangle.java
+
+package com.test;
+
+public class Triangle 
+{
+    private String triangleName;
+    
+	
+
+	public String getTriangleName() {
+		return triangleName;
+	}
+
+
+
+	public void setTriangleName(String triangleName) {
+		this.triangleName = triangleName;
+	}
+
+
+
+	public void draw(){
+		System.out.println("Triangle draw "+triangleName);
+	}
+	 
+}
+
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+  public static void main(String[] args) {
+	
+	 //Triangle obj = new Triangle(); spring is not used
+	  ApplicationContext ctx = new ClassPathXmlApplicationContext("spring.xml");
+	  
+	  Triangle obj = (Triangle)ctx.getBean("triangle");//id which is given 
+	  
+	 
+	  obj.draw();
+	  
+	  
+	  
+}
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+<bean id="triangle" class="com.test.Triangle">
+  <property name="triangleName"  value="Equilateral Triangle"></property>
+
+</bean>
+	 
+</beans>
+
+
+output:
+
+Triangle draw Equilateral Triangle
+             // if name as to be changed change in value of spring.xml
+==============================================================================================================================================================================
+
+                                        singleton bean (one bean two different objects)
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+  public static void main(String[] args) {
+	
+	 //Triangle obj = new Triangle(); spring is not used
+	  ApplicationContext ctx = new ClassPathXmlApplicationContext("spring.xml");
+	  
+	  Triangle obj1 = (Triangle)ctx.getBean("triangle");//id which is given 
+	  obj1.draw();
+	  
+	  Triangle obj2 = (Triangle)ctx.getBean("triangle");//id which is given 
+	  obj2.draw();
+	  
+	  if(obj1==obj2){
+		  System.out.println("Singleton");
+	  }else{
+		  System.out.println("prototype");
+	  }
+	  
+}
+}
+
+spring and test is same
+
+output:
+
+Triangle draw Equilateral Triangle
+Triangle draw Equilateral Triangle
+Singleton
+                  //default scope is singleton
+=====================================================================================================================================================
+                                                                          prototype
+                        
+   <beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+<bean id="triangle" class="com.test.Triangle"  scope="prototype">
+  <property name="triangleName"  value="Equilateral Triangle"></property>
+
+</bean>
+	 
+</beans>
+
+output:
+Triangle draw Equilateral Triangle
+Triangle draw Equilateral Triangle
+prototype
+
+test and testapp is same 
+best to keep it in singleton
+
+======================================================================================================================================================
+   
+             
+                                                                 adding another field
+
+       Triangle.java
+
+package com.test;
+
+public class Triangle 
+{
+    private String triangleName;
+    private int sides;
+	
+	
+
+	public String getTriangleName() {
+		return triangleName;
+	}
+
+
+
+	public void setTriangleName(String triangleName) {
+		this.triangleName = triangleName;
+	}
+
+
+	public int getSides() {
+		return sides;
+	}
+
+
+
+	public void setSides(int sides) {
+		this.sides = sides;
+	}
+
+
+
+	public void draw(){
+		System.out.println("Triangle draw "+triangleName+" "+sides);
+	}
+	 
+}
+
+
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+<bean id="triangle" class="com.test.Triangle" >
+  <property name="triangleName"  value="Equilateral Triangle"></property>
+  <property name="sides" value="3"/>
+
+</bean>
+	 
+</beans>
+
+testapp is same
+
+output:
+Triangle draw Equilateral Triangle 3
+
+=========================================================================================================================================================
+
+                                                               using constructor
+
+                                        (we should have both default and parameterized constructor)
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+  public static void main(String[] args) {
+	
+	 //Triangle obj = new Triangle(); spring is not used
+	  ApplicationContext ctx = new ClassPathXmlApplicationContext("spring.xml");
+	  
+	  Triangle obj = (Triangle)ctx.getBean("triangle1");//id which is given 
+	  obj.draw();
+	  
+	  
+}
+}
+
+       Triangle.java
+
+package com.test;
+
+public class Triangle 
+{
+    private String triangleName;
+    private int sides;
+	
+	
+
+	public String getTriangleName() {
+		return triangleName;
+	}
+
+
+
+	public void setTriangleName(String triangleName) {
+		this.triangleName = triangleName;
+	}
+
+
+	public int getSides() {
+		return sides;
+	}
+
+
+
+	public void setSides(int sides) {
+		this.sides = sides;
+	}
+
+
+
+	public void draw(){
+		System.out.println("Triangle draw "+triangleName+" "+sides);
+	}
+
+
+
+	public Triangle() {
+		super();
+	}
+
+
+
+	public Triangle(String triangleName, int sides) {
+		super();
+		this.triangleName = triangleName;
+		this.sides = sides;
+	}
+	 
+	
+	
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+<bean id="triangle" class="com.test.Triangle" >
+  <property name="triangleName"  value="Equilateral Triangle"></property>
+  <property name="sides" value="3"/>
+
+</bean>
+
+<bean id="triangle1" class="com.test.Triangle" >
+<constructor-arg value="Isoceles" />
+<constructor-arg value="4"/>
+</bean>
+	 
+</beans>
+
+output:
+Triangle draw Isoceles 4
+
+
+=====================================================================================================================================
+
+                                   we can give order in the way it is spedified in constructor even if it changed in spring.xml
+                                                        
+                                                            index should be given in spring.xml
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+<bean id="triangle" class="com.test.Triangle" >
+  <property name="triangleName"  value="Equilateral Triangle"></property>
+  <property name="sides" value="3"/>
+
+</bean>
+
+<bean id="triangle1" class="com.test.Triangle" >
+<constructor-arg index="0" value="Isoceles" />
+<constructor-arg index="1" value="4"/>
+</bean>
+	 
+</beans>
+
+
+output: is same as above
+
+==================================================================================================================================
+                                                             type in spring.xml
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+<bean id="triangle" class="com.test.Triangle" >
+  <property name="triangleName"  value="Equilateral Triangle"></property>
+  <property name="sides" value="3"/>
+
+</bean>
+
+<bean id="triangle1" class="com.test.Triangle" >
+<constructor-arg type="String" value="Isoceles" />
+<constructor-arg type="int" value="4"/>
+</bean>
+	 
+</beans>
+
+
+if both the  type is same as example int,.... then go for index or maintain the order
+
+  output : is same as above                             
+=========================================================================================================================================
+
+
+                                                             LIFE CYCLE
+
+                                                      1) CREATE SPRING1.XML FILE
+
+package com.test;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+public class Triangle implements InitializingBean , DisposableBean
+{
+  
+	
+	public void draw(){
+		System.out.println("Triangle draw ");
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception{
+		System.out.println(("init method called"));
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		System.out.println(("destroy method"));
+		
+	}
+}
+
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+  public static void main(String[] args) {
+	
+	 //Triangle obj = new Triangle(); spring is not used
+	  ApplicationContext ctx = new ClassPathXmlApplicationContext("spring1.xml");
+	  
+	  Triangle obj = (Triangle)ctx.getBean("triangle");//id which is given 
+	  obj.draw();
+	  
+	  
+}
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+<bean id="triangle" class="com.test.Triangle">
+
+</bean>
+	 
+</beans>
+
+
+OUTPUT:
+init method called
+Triangle draw 
+                               if ctx is not closed then destroy is not implemented
+
+=============================================================================================================================================
+                                            2) destroy method---coz we  have  closed the ctx
+package com.test;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+  public static void main(String[] args) {
+	
+	 //Triangle obj = new Triangle(); spring is not used
+	  ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("spring1.xml");
+	  
+	  Triangle obj = (Triangle)ctx.getBean("triangle");//id which is given 
+	  obj.draw();
+	  
+	  ctx.close();
+}
+}
+
+
+output:
+
+init method called
+Triangle draw 
+destroy method
+
+===============================================================================================================
+
+                                    3) if inita   and dispos is removed init and dispose is not called
+
+package com.test;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+public class Triangle 
+{
+  
+	
+	public void draw(){
+		System.out.println("Triangle draw ");
+	}
+
+	public void afterPropertiesSet() throws Exception{
+		System.out.println(("init method called"));
+	}
+
+	public void destroy() throws Exception {
+		System.out.println(("destroy method"));
+		
+	}
+}
+
+
+output:
+Triangle draw
+
+======================================================================================================================
+         
+                                                          4)  init and destroy is given sprin1.xml
+package com.test;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+public class Triangle 
+{
+  
+	
+	public void draw(){
+		System.out.println("Triangle draw ");
+	}
+
+	public void init() throws Exception{
+		System.out.println(("init method called"));
+	}
+
+	public void destroy() throws Exception {
+		System.out.println(("destroy method"));
+		
+	}
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+<bean id="triangle" class="com.test.Triangle"  init-method="init" destroy-method="destroy">
+
+</bean>
+	 
+</beans>
+
+
+output:
+init method called
+Triangle draw 
+destroy method
+
+
+===========================================================================================================================================
+
+                                5)  in BEANS TAG give init and DESTROY...THIS WILL APPLY TO ALL THE BEANS
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+<bean id="triangle" class="com.test.Triangle"  >
+
+</bean>
+	 
+</beans>
+
+output:
+init method called
+Triangle draw 
+destroy method
+
+
+   if for any bean they dont want init and destrut we have to specify in that particular bean
+
+====================================================================================================================================================
+
+                           6) BEAN POST PROCESSOR
+ package com.test;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+
+public class BPP implements BeanPostProcessor{
+
+	@Override
+	public Object postProcessAfterInitialization(Object obj, String name)
+			throws BeansException {
+		System.out.println("BPP after init called");
+		return obj;
+	}
+
+	@Override
+	public Object postProcessBeforeInitialization(Object obj, String name)
+			throws BeansException {
+		System.out.println("BPP before init called");
+		return obj;
+	}
+
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+<bean id="triangle" class="com.test.Triangle"  ></bean>
+
+
+	<bean class="com.test.BPP"></bean> 
+</beans>
+
+
+output:
+
+BPP before init called
+init method called
+BPP after init called
+Triangle draw 
+destroy method
+
+===========================================================================================================================================================================
+
+                            6) BEAN FACTORY POST PROCESSOR
+
+package com.test;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+
+public class BFPP implements BeanFactoryPostProcessor {
+
+	@Override
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory obj)
+			throws BeansException {
+		System.out.println("BFPP Method CAlled");
+		
+	}
+      
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+<bean id="triangle" class="com.test.Triangle"  ></bean>
+
+
+	<bean class="com.test.BPP"></bean> 
+	
+	<bean class="com.test.BFPP"></bean> 
+</beans>
+
+
+output:
+BFPP Method CAlled
+BPP before init called
+init method called
+BPP after init called
+Triangle draw 
+destroy method
+=============================================================================================================================================================================
+             7)  if you want to know with what name the bean is created ,only spring knows the name bt id,,the bean doesn't know,container passess the name,
+
+             it gives aware interfaces,if any bean implements aware interfaces ....................
+
+package com.test;
+
+import org.springframework.beans.factory.BeanNameAware;
+
+
+public class Triangle implements BeanNameAware
+{
+  
+	
+	public void draw(){
+		System.out.println("Triangle draw ");
+	}
+
+	public void init() throws Exception{
+		System.out.println(("init method called"));
+	}
+
+	public void destroy() throws Exception {
+		System.out.println(("destroy method"));
+		
+	}
+
+	@Override
+	public void setBeanName(String arg0) {
+
+System.out.println("BEAN name aware name = "+arg0);
+		
+	}
+}
+
+
+//it is called before init
+
+output:
+BFPP Method CAlled
+BEAN name aware name = triangle
+BPP before init called
+init method called
+BPP after init called
+Triangle draw 
+destroy method
+
+=================================================================================================================================================================================== 
+ 
+              **************************************important concept  BEAN WIRING***************************
+
+package com.test;
+
+
+
+public class Triangle 
+{
+  private Point point;
+  
+  
+	
+	public Point getPoint() {
+	return point;
+}
+
+
+
+public void setPoint(Point point) {
+	this.point = point;
+}
+
+
+
+	public void draw(){
+		System.out.println("Triangle draw "+point.getX()+" "+point.getY());
+	}
+
+	
+}
+
+package com.test;
+
+public class Point {
+	
+	private int x;
+	
+	private int y;
+
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+}
+
+
+package com.test;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+  public static void main(String[] args) {
+	
+	 //Triangle obj = new Triangle(); spring is not used
+	  ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("spring2.xml");
+	  
+	  Triangle obj = (Triangle)ctx.getBean("triangle");//id which is given 
+	  obj.draw();
+	  
+	  ctx.close();
+	  
+	 
+}
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+   <bean id="triangle" class="com.test.Triangle">
+   <property name = "point" ref="point"/>
+   </bean> 
+<bean id="point" class="com.test.Point">
+<property name ="x" value = "10"/>
+<property name="y" value = "20"/>
+</bean>
+</beans>
+
+
+output:
+Triangle draw 10 20
+============================================================================================================================================================================
+
+package com.test;
+
+
+
+public class Triangle 
+{
+  private Point point1;
+  private Point point2;
+  private Point point3;
+  
+  
+	
+
+
+
+
+	public Point getPoint1() {
+	return point1;
+}
+
+
+
+
+
+
+
+public void setPoint1(Point point1) {
+	this.point1 = point1;
+}
+
+
+
+
+
+
+
+public Point getPoint2() {
+	return point2;
+}
+
+
+
+
+
+
+
+public void setPoint2(Point point2) {
+	this.point2 = point2;
+}
+
+
+
+
+
+
+
+public Point getPoint3() {
+	return point3;
+}
+
+
+
+
+
+
+
+public void setPoint3(Point point3) {
+	this.point3 = point3;
+}
+
+
+
+
+
+
+
+	public void draw(){
+		System.out.println("Triangle draw ");
+		System.out.println(point1.getX()+" "+point1.getY());
+		System.out.println(point2.getX()+" "+point2.getY());
+		System.out.println(point3.getX()+" "+point3.getY());
+	}
+
+	
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+   <bean id="triangle" class="com.test.Triangle">
+   <property name = "point1" ref="point1"/>
+   <property name = "point2" ref="point2"/>
+   <property name = "point3" ref="point3"/>
+   </bean> 
+<bean id="point1" class="com.test.Point">
+<property name ="x" value = "10"/>
+<property name="y" value = "20"/>
+</bean>
+<bean id="point2" class="com.test.Point">
+<property name ="x" value = "30"/>
+<property name="y" value = "40"/>
+</bean>
+<bean id="point3" class="com.test.Point">
+<property name ="x" value = "50"/>
+<property name="y" value = "60"/>
+</bean>
+</beans>
+
+
+testapp and point is same
+
+output:
+Triangle draw 
+10 20
+30 40
+50 60
+======================================================================================================================================================================================
+
+                      constructor injection
+
+package com.test;
+
+public class Triangle 
+{
+  private Point point1;
+  private Point point2;
+  private Point point3;
+
+  public Triangle(Point point1, Point point2, Point point3) {
+	super();
+	this.point1 = point1;
+	this.point2 = point2;
+	this.point3 = point3;
+}
+
+
+public Triangle() {
+	super();
+}
+
+
+public void draw(){
+		System.out.println("Triangle draw ");
+		System.out.println(point1.getX()+" "+point1.getY());
+		System.out.println(point2.getX()+" "+point2.getY());
+		System.out.println(point3.getX()+" "+point3.getY());
+	}
+
+	
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+   <bean id="triangle" class="com.test.Triangle">
+   <constructor-arg ref="point1"/>
+   <constructor-arg ref="point2"/>
+   <constructor-arg ref="point3"/>
+   </bean> 
+<bean id="point1" class="com.test.Point">
+<property name ="x" value = "10"/>
+<property name="y" value = "20"/>
+</bean>
+<bean id="point2" class="com.test.Point">
+<property name ="x" value = "30"/>
+<property name="y" value = "40"/>
+</bean>
+<bean id="point3" class="com.test.Point">
+<property name ="x" value = "50"/>
+<property name="y" value = "60"/>
+</bean>
+</beans>
+
+
+output:
+Triangle draw 
+10 20
+30 40
+50 60
+
+============================================================================================================================================================================================
+
+                                                                   autowire by byName
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+   <bean id="triangle" class="com.test.Triangle" autowire="byName">
+
+   </bean> 
+<bean id="point1" class="com.test.Point">
+<property name ="x" value = "10"/>
+<property name="y" value = "20"/>
+</bean>
+<bean id="point2" class="com.test.Point">
+<property name ="x" value = "30"/>
+<property name="y" value = "40"/>
+</bean>
+<bean id="point3" class="com.test.Point">
+<property name ="x" value = "50"/>
+<property name="y" value = "60"/>
+</bean>
+</beans>
+
+
+output:
+Triangle draw 
+10 20
+30 40
+50 60
+
+
+this will work only when property name is same as bean class name
+
+if not it gives null pointer exception
+
+
+================================================================================================================================================================================================
+
+         by constructor
+
+
+package com.test;
+
+
+
+public class Triangle 
+{
+  private Point point1;
+  private Point point2;
+  private Point point3;
+  
+  public Point getPoint1() {
+	return point1;
+}
+
+public void setPoint1(Point point1) {
+	this.point1 = point1;
+}
+
+public Point getPoint2() {
+	return point2;
+}
+
+public void setPoint2(Point point2) {
+	this.point2 = point2;
+}
+
+
+public Point getPoint3() {
+	return point3;
+}
+
+public void setPoint3(Point point3) {
+	this.point3 = point3;
+}
+
+
+public Triangle() {
+	super();
+}
+
+public Triangle(Point point1, Point point2, Point point3) {
+	super();
+	this.point1 = point1;
+	this.point2 = point2;
+	this.point3 = point3;
+}
+
+public void draw(){
+		System.out.println("Triangle draw ");
+		System.out.println(point1.getX()+" "+point1.getY());
+		System.out.println(point2.getX()+" "+point2.getY());
+		System.out.println(point3.getX()+" "+point3.getY());
+	}
+
+	
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+   <bean id="triangle" class="com.test.Triangle" autowire="constructor">
+
+   </bean> 
+<bean id="point1" class="com.test.Point">
+<property name ="x" value = "10"/>
+<property name="y" value = "20"/>
+</bean>
+<bean id="point2" class="com.test.Point">
+<property name ="x" value = "30"/>
+<property name="y" value = "40"/>
+</bean>
+<bean id="point3" class="com.test.Point">
+<property name ="x" value = "50"/>
+<property name="y" value = "60"/>
+</bean>
+</beans>
+
+
+
+output:
+Triangle draw 
+10 20
+30 40
+50 60
+
+
+
+=============================================================================================================================================================================
+
+----------------------------by name---------------------------------
+
+beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+   <bean id="triangle" class="com.test.Triangle" autowire="byName">
+
+   </bean> 
+<bean id="point" class="com.test.Point">
+<property name ="x" value = "10"/>
+<property name="y" value = "20"/>
+</bean>
+
+
+</beans>
+
+package com.test;
+
+
+
+public class Triangle 
+{
+  private Point point;
+ 
+
+public Triangle() {
+	super();
+}
+
+
+public Triangle(Point point) {
+	super();
+	this.point = point;
+}
+
+
+public Point getPoint() {
+	return point;
+}
+
+
+public void setPoint(Point point) {
+	this.point = point;
+}
+
+
+public void draw(){
+		System.out.println("Triangle draw ");
+		System.out.println(point.getX()+" "+point.getY());
+	
+	}
+
+	
+}
+
+
+output:
+Triangle draw 
+10 20
+
+
+
+----------------by byType-------
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+   <bean id="triangle" class="com.test.Triangle" autowire="byType">
+
+   </bean> 
+<bean id="point" class="com.test.Point">
+<property name ="x" value = "10"/>
+<property name="y" value = "20"/>
+</bean>
+
+
+</beans>
+
+same output
+
+-----by constructor---
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+   <bean id="triangle" class="com.test.Triangle" autowire="constructor">
+
+   </bean> 
+<bean id="point" class="com.test.Point">
+<property name ="x" value = "10"/>
+<property name="y" value = "20"/>
+</bean>
+
+
+</beans>
+
+output is same
+=============================================================================================================================================================================
+    
+
+injection List
+
+
+package com.test;
+
+import java.util.List;
+
+
+
+public class Triangle 
+{
+  private List<Point> points ;
+ 
+
+public Triangle() {
+	super();
+	
+}
+
+
+public Triangle(List<Point> points) {
+	super();
+	this.points = points;
+}
+
+
+
+
+
+public List<Point> getPoints() {
+	return points;
+}
+
+
+
+
+
+public void setPoints(List<Point> points) {
+	this.points = points;
+}
+
+
+
+
+
+public void draw(){
+		System.out.println("Triangle draw ");
+		for(Point p : points){
+			System.out.println(p.getX()+" "+p.getY());
+		}
+	
+	}
+
+	
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+   <bean id="triangle" class="com.test.Triangle">
+   <property name="points">
+   <list>
+   <ref bean="point1"/>
+   <ref bean="point2"/>
+   <ref bean="point2"/>
+   
+   </list>
+   </property>
+   </bean> 
+<bean id="point1" class="com.test.Point">
+<property name ="x" value = "10"/>
+<property name="y" value = "20"/>
+</bean>
+
+<bean id="point2" class="com.test.Point">
+<property name ="x" value = "100"/>
+<property name="y" value = "200"/>
+</bean>
+
+<bean id="point3" class="com.test.Point">
+<property name ="x" value = "120"/>
+<property name="y" value = "230"/>
+</bean>
+
+</beans>
+
+
+
+output:
+
+Triangle draw 
+10 20
+100 200
+100 200
+
+
+==================================================================================================================================================================================================================
+
+see pdf for injecting set and map
+===================================================================================================================================================================================================================
+
+
+
+
+
+
+
+

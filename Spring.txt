@@ -1,0 +1,2409 @@
+Triangle: Setter injection:
+package com.test;
+
+public class Triangle {
+
+	public void draw()
+	{
+		System.out.println(" Traingle draw ");
+	}
+}
+TestApp:
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ApplicationContext ctx= new ClassPathXmlApplicationContext("spring.xml");
+		Triangle obj = (Triangle)ctx.getBean("triangle");
+		obj.draw();
+	}
+}
+
+spring.xml:
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<bean id="triangle" class="com.test.Triangle">
+	</bean>
+	 
+</beans>
+==========================================================================
+
+Singleton and prorotype:
+
+package com.test;
+
+public class Triangle {
+	private String triangleName;
+
+	public String getTriangleName() {
+		return triangleName;
+	}
+
+
+
+	public void setTriangleName(String triangleName) {
+		this.triangleName = triangleName;
+	}
+
+	public void draw()
+	{
+		System.out.println(" Traingle draw "+ triangleName);
+	}
+}
+
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ApplicationContext ctx= new ClassPathXmlApplicationContext("spring.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+		Triangle obj2 = (Triangle)ctx.getBean("triangle");
+		obj2.draw();
+		if(obj1==obj2){
+			System.out.println(" Singleton");
+		}else{
+			System.out.println(" Prototype ");
+		}
+	}
+}
+
+Give scope=prototype to make it prototype:
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<bean id="triangle" class="com.test.Triangle" scope="prototype">
+		<property name="triangleName" value="Equilateral" />
+	</bean>
+	 
+</beans>
+===========================================================================================================================
+Constructor injection:
+package com.test;
+
+public class Triangle {
+	
+	private int sides;
+	private String triangleName;
+	
+	public Triangle() {
+		super();
+	}
+
+	public Triangle(int sides, String triangleName) {
+		super();
+		this.sides = sides;
+		this.triangleName = triangleName;
+	}
+	
+	public String getTriangleName() {
+		return triangleName;
+	}
+
+	public void setTriangleName(String triangleName) {
+		this.triangleName = triangleName;
+	}
+	
+
+	public int getSides() {
+		return sides;
+	}
+
+	public void setSides(int sides) {
+		this.sides = sides;
+	}
+
+	public void draw()
+	{
+		System.out.println(" Traingle draw "+ triangleName+" sides:" + sides);
+	}
+}
+
+
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ApplicationContext ctx= new ClassPathXmlApplicationContext("spring.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle1");
+		obj1.draw();
+	}
+}
+
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<bean id="triangle" class="com.test.Triangle" scope="prototype">
+		<property name="triangleName" value="Equilateral" />
+		<property name="sides" value="3" />
+	</bean>
+	
+	<bean id="triangle1" class="com.test.Triangle">
+		<constructor-arg index="0" value="10" />
+		<constructor-arg index="1" value="equi" />
+	</bean>
+	 
+</beans>
+
+
+Using type:
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	<bean id="triangle" class="com.test.Triangle" scope="prototype">
+		<property name="triangleName" value="Equilateral" />
+		<property name="sides" value="3" />
+	</bean>
+	
+	<bean id="triangle1" class="com.test.Triangle">
+		<constructor-arg type="int" value="10" />
+		<constructor-arg type="String" value="equi" />
+	</bean>
+	 
+</beans>
+========================================================================================
+
+Initialisation bean:
+
+package com.test;
+
+import org.springframework.beans.factory.InitializingBean;
+
+public class Triangle implements InitializingBean{
+
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw ");
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		System.out.println("Init method called");
+		
+	}
+	
+	
+}
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ApplicationContext ctx= new ClassPathXmlApplicationContext("spring1.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+	}
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	
+	<bean id="triangle" class="com.test.Triangle"></bean>
+</beans>
+========================================================================================
+
+DisposableBean:
+
+package com.test;
+
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+public class Triangle implements InitializingBean, DisposableBean{
+
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw ");
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		System.out.println("Init method called");
+		
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		System.out.println("Destroy method called");
+		
+	}
+	
+	
+}
+
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext("spring1.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+		
+		ctx.close();
+	}
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	
+	<bean id="triangle" class="com.test.Triangle"></bean>
+</beans>
+=================================================================================================================
+
+Without using init method n destroy of Initialisation bean and DisposableBean:
+
+package com.test;
+
+
+
+public class Triangle {
+
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw ");
+	}
+
+
+	public void init() {
+		System.out.println("Init method called");
+		
+	}
+
+
+	public void destroy() {
+		System.out.println("Destroy method called");
+		
+	}
+	
+	
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	
+	
+	<bean id="triangle" class="com.test.Triangle" init-method="init" destroy-method="destroy"></bean>
+	
+</beans>
+=======================================================================================================================
+
+metioning default init and destroy for same above pgm:(custom initialisation)
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	
+	<bean id="triangle" class="com.test.Triangle"></bean>
+	
+</beans>
+==================================================================================================================================
+
+Using BPP:
+
+package com.test;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
+
+public class BPP implements BeanPostProcessor {
+
+	@Override
+	public Object postProcessAfterInitialization(Object obj, String name)
+			throws BeansException {
+		System.out.println("BPP AFTER INIT CALLED");
+		return obj;
+	}
+
+	@Override
+	public Object postProcessBeforeInitialization(Object obj, String name)
+			throws BeansException {
+		System.out.println("BPP BEFORE INIT CALLED");
+		return obj;
+	}
+
+}
+
+
+package com.test;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext("spring1.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+		
+		ctx.close();
+	}
+}
+
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	
+	<bean id="triangle" class="com.test.Triangle"></bean>
+	<bean class="com.test.BPP"></bean>
+</beans>
+
+========================================================================================================
+
+BFPP:
+
+package com.test;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+
+public class BFPP implements BeanFactoryPostProcessor{
+
+	@Override
+	public void postProcessBeanFactory(ConfigurableListableBeanFactory arg0)
+			throws BeansException {
+		System.out.println(" BFPP METHOD CALLED ");
+		
+	}
+
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	
+	<bean id="triangle" class="com.test.Triangle"></bean>
+	<bean class="com.test.BPP"></bean>
+	<bean class="com.test.BFPP"></bean>
+</beans>
+===============================================================================================================
+
+bean name aware:
+
+
+package com.test;
+
+import org.springframework.beans.factory.BeanNameAware;
+
+
+
+public class Triangle implements BeanNameAware{
+
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw ");
+	}
+
+
+	public void init() {
+		System.out.println("Init method called");
+		
+	}
+
+
+	public void destroy() {
+		System.out.println("Destroy method called");
+		
+	}
+
+
+	@Override
+	public void setBeanName(String arg0) {
+		System.out.println(" Bean name aware name = "+ arg0);
+	}
+	
+	
+}
+========================================================================================================================
+
+Dependency injection ex:
+
+package com.test;
+
+
+public class Triangle {
+
+	private Point point;
+	
+	public Point getPoint() {
+		return point;
+	}
+
+	public void setPoint(Point point) {
+		this.point = point;
+	}
+
+	public void draw()
+	{
+		System.out.println(" Traingle draw "+point.getX()+" "+ point.getY());
+	}
+
+}
+
+
+
+package com.test;
+package com.test;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext("spring2.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+		
+		ctx.close();
+		
+	}
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	<bean id="triangle" class="com.test.Triangle">
+	<property name="point" ref="point" />
+	</bean>
+	<bean id="point" class="com.test.Point">
+	<property name="x" value="10" />
+	<property name="y" value="20" />
+	</bean>
+</beans>
+
+
+package com.test;
+
+public class Point {
+	
+	private int x;
+	private int y;
+	public int getX() {
+		return x;
+	}
+	public void setX(int x) {
+		this.x = x;
+	}
+	public int getY() {
+		return y;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
+	
+	
+}
+=======================================================================================================================
+More than one:
+
+
+package com.test;
+
+
+public class Triangle {
+
+	private Point point1;
+	private Point point2;
+	private Point point3;
+	
+	
+
+	public Point getPoint1() {
+		return point1;
+	}
+
+
+
+	public void setPoint1(Point point1) {
+		this.point1 = point1;
+	}
+
+
+
+	public Point getPoint2() {
+		return point2;
+	}
+
+
+
+	public void setPoint2(Point point2) {
+		this.point2 = point2;
+	}
+
+
+
+	public Point getPoint3() {
+		return point3;
+	}
+
+
+
+	public void setPoint3(Point point3) {
+		this.point3 = point3;
+	}
+
+
+
+	public void draw()
+	{
+		System.out.println(" Traingle draw "+point1.getX()+" "+ point1.getY());
+		System.out.println(" Traingle draw "+point2.getX()+" "+ point2.getY());
+		System.out.println(" Traingle draw "+point3.getX()+" "+ point3.getY());
+	}
+
+}
+
+
+package com.test;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext("spring2.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+		
+		ctx.close();
+		
+	}
+}
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	<bean id="triangle" class="com.test.Triangle">
+	<property name="point1" ref="point1" />
+	<property name="point2" ref="point2" />
+	<property name="point3" ref="point3" />
+	</bean>
+	
+	<bean id="point1" class="com.test.Point">
+	<property name="x" value="10" />
+	<property name="y" value="20" />
+	</bean>
+	
+	<bean id="point2" class="com.test.Point">
+	<property name="x" value="11" />
+	<property name="y" value="21" />
+	</bean>
+	
+	<bean id="point3" class="com.test.Point">
+	<property name="x" value="12" />
+	<property name="y" value="22" />
+	</bean>
+	
+</beans>
+====================================================================================================================
+
+Same above pgm using constructor injection:
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	<bean id="triangle" class="com.test.Triangle">
+		<constructor-arg ref="point1" />
+		<constructor-arg ref="point2" />
+		<constructor-arg ref="point3" />
+	</bean>
+	
+	<bean id="point1" class="com.test.Point">
+	<property name="x" value="10" />
+	<property name="y" value="20" />
+	</bean>
+	
+	<bean id="point2" class="com.test.Point">
+	<property name="x" value="11" />
+	<property name="y" value="21" />
+	</bean>
+	
+	<bean id="point3" class="com.test.Point">
+	<property name="x" value="12" />
+	<property name="y" value="22" />
+	</bean>
+	
+</beans>
+=========================================================================================================================
+
+Using Autowire byName to connect two beans:
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	<bean id="triangle" class="com.test.Triangle" autowire="byName">
+	</bean>
+	
+	<bean id="point1" class="com.test.Point">
+	<property name="x" value="10" />
+	<property name="y" value="20" />
+	</bean>
+	
+	<bean id="point2" class="com.test.Point">
+	<property name="x" value="11" />
+	<property name="y" value="21" />
+	</bean>
+	
+	<bean id="point3" class="com.test.Point">
+	<property name="x" value="12" />
+	<property name="y" value="22" />
+	</bean>
+	
+</beans>
+==========================================================================================================================
+
+injection is done by using byType:
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	<bean id="triangle" class="com.test.Triangle" autowire="byType">
+	</bean>
+	
+	<bean id="point" class="com.test.Point">
+	<property name="x" value="10" />
+	<property name="y" value="20" />
+	</bean>
+	
+	
+</beans>
+=============================================================================================================================
+By injecting through constructor:
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	<bean id="triangle" class="com.test.Triangle" autowire="constructor">
+	</bean>
+	
+	<bean id="point" class="com.test.Point">
+	<property name="x" value="10" />
+	<property name="y" value="20" />
+	</bean>
+	
+	
+</beans>
+=========================================================================================================================
+To injection collection(list):
+
+
+import java.util.List;
+
+
+public class Triangle {
+
+	private List<Point> points;
+	
+	public List<Point> getPoints() {
+		return points;
+	}
+
+	public void setPoints(List<Point> points) {
+		this.points = points;
+	}
+
+	public void draw()
+	{
+		System.out.println(" Traingle draw ");
+		for(Point p : points)
+		{
+			System.out.println(p.getX()+" "+p.getY());
+		}
+		
+	}
+
+}
+
+package com.test;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext("spring2.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+		
+		ctx.close();
+		
+	}
+}
+
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd" default-init-method="init" default-destroy-method="destroy">
+	
+	<bean id="triangle" class="com.test.Triangle" >
+		<property name="points">
+			<list>
+				<ref bean="point1"/>
+				<ref bean="point2"/>
+				<ref bean="point3"/>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="point1" class="com.test.Point">
+	<property name="x" value="10" />
+	<property name="y" value="20" />
+	</bean>
+	
+	<bean id="point2" class="com.test.Point">
+	<property name="x" value="10" />
+	<property name="y" value="20" />
+	</bean>
+	
+	<bean id="point3" class="com.test.Point">
+	<property name="x" value="10" />
+	<property name="y" value="20" />
+	</bean>
+	
+</beans>
+
+package com.test;
+
+public class Point {
+	private int x;
+	private int y;
+	public int getX() {
+		return x;
+	}
+	public void setX(int x) {
+		this.x = x;
+	}
+	public int getY() {
+		return y;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
+}
+==============================================================================================================================
+
+			SPRING ANNOTATIONS
+
+
+package com.test;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+public class Triangle {
+
+	@PostConstruct
+	public void init()
+	{
+		System.out.println(" init called");
+	}
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw ");
+
+	} 
+	
+	@PreDestroy
+	public void destroy()
+	{
+		System.out.println(" destroy called ");
+	}
+}
+
+package com.test;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext("spring3.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+		
+		ctx.close();
+		
+	}
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+<context:annotation-config/>
+
+<bean id="triangle" class="com.test.Triangle"></bean>
+	
+</beans>
+===================================================================================================================================
+
+Using component annotation in bean instead of <bean id...> in xml:(context annotation config can be removed if context annotation
+cmponent scan is used but not vice versa is possible)
+
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.stereotype.Component;
+
+@Component 
+public class Triangle {
+
+	@PostConstruct
+	public void init()
+	{
+		System.out.println(" init called");
+	}
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw ");
+
+	} 
+	
+	@PreDestroy
+	public void destroy()
+	{
+		System.out.println(" destroy called ");
+	}
+}
+
+package com.test;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext("spring3.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+		
+		ctx.close();
+		
+	}
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+<context:annotation-config/>
+<context:component-scan base-package="com.test"/>
+</beans>
+=====================================================================================================================================
+
+Naming component:
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.stereotype.Component;
+
+@Component("triangle1")
+public class Triangle {
+
+	@PostConstruct
+	public void init()
+	{
+		System.out.println(" init called");
+	}
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw ");
+
+	} 
+	
+	@PreDestroy
+	public void destroy()
+	{
+		System.out.println(" destroy called ");
+	}
+}
+
+package com.test;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext("spring3.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle1");
+		obj1.draw();
+		
+		ctx.close();
+		
+	}
+}
+
+==========================================================================================================
+using @value annotation:
+
+package com.test;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Triangle {
+	
+	@Value("Equilateral")
+	private String triangleName;
+	
+	@PostConstruct
+	public void init()
+	{
+		System.out.println(" init called");
+	}
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw "+ triangleName);
+
+	} 
+	
+	@PreDestroy
+	public void destroy()
+	{
+		System.out.println(" destroy called ");
+	}
+}
+================================================================================================================
+
+@Autowire annotation to autowire byType point and traingle: @Component has to be present in point bean to use 
+Autowired in triangle bean:
+
+package com.test;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Triangle {
+	
+	@Value("Equilateral")
+	private String triangleName;
+	
+	@Autowired
+	private Point point;
+	
+	
+	public String getTriangleName() {
+		return triangleName;
+	}
+
+	public void setTriangleName(String triangleName) {
+		this.triangleName = triangleName;
+	}
+
+	public Point getPoint() {
+		return point;
+	}
+
+	public void setPoint(Point point) {
+		this.point = point;
+	}
+
+	@PostConstruct
+	public void init()
+	{
+		System.out.println(" init called");
+	}
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw "+ triangleName);
+		System.out.println(point.getX()+" "+point.getY());
+
+	} 
+	
+	@PreDestroy
+	public void destroy()
+	{
+		System.out.println(" destroy called ");
+	}
+}
+
+package com.test;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Point {
+	@Value("10")
+	private int x;
+	@Value("20")
+	private int y;
+	public int getX() {
+		return x;
+	}
+	public void setX(int x) {
+		this.x = x;
+	}
+	public int getY() {
+		return y;
+	}
+	public void setY(int y) {
+		this.y = y;
+	}
+}
+
+
+
+package com.test;
+
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestApp {
+
+	public static void main(String[] args) {
+		
+		ClassPathXmlApplicationContext ctx= new ClassPathXmlApplicationContext("spring3.xml");
+		Triangle obj1 = (Triangle)ctx.getBean("triangle");
+		obj1.draw();
+		
+		ctx.close();
+		
+	}
+}
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+     http://www.springframework.org/schema/context
+     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+<context:annotation-config/>
+<context:component-scan base-package="com.test"/>
+</beans>
+=============================================================================================================================
+Using @Autowired on setter makes setter injection:
+
+package com.test;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Triangle {
+	
+	@Value("Equilateral")
+	private String triangleName;
+	
+	private Point point;
+	
+	
+	public String getTriangleName() {
+		return triangleName;
+	}
+
+	public void setTriangleName(String triangleName) {
+		this.triangleName = triangleName;
+	}
+
+	public Point getPoint() {
+		return point;
+	}
+	
+	@Autowired
+	public void setPoint(Point point) {
+		System.out.println("setter injection");
+		this.point = point;
+	}
+
+	@PostConstruct
+	public void init()
+	{
+		System.out.println(" init called");
+	}
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw "+ triangleName);
+		System.out.println(point.getX()+" "+point.getY());
+
+	} 
+	
+	@PreDestroy
+	public void destroy()
+	{
+		System.out.println(" destroy called ");
+	}
+}
+============================================================================================================
+Using constructor injection by putting autowired on constructor:
+
+
+package com.test;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class Triangle {
+	
+	@Value("Equilateral")
+	private String triangleName;
+	
+	private Point point;
+	
+	
+	public Triangle() {
+		super();
+	}
+	@Autowired
+	public Triangle(Point point) {
+		super();
+		System.out.println("Constructor injection");
+		this.point = point;
+	}
+
+	public String getTriangleName() {
+		return triangleName;
+	}
+
+	public void setTriangleName(String triangleName) {
+		this.triangleName = triangleName;
+	}
+
+	public Point getPoint() {
+		return point;
+	}
+	
+
+	public void setPoint(Point point) {
+		
+		this.point = point;
+	}
+
+	@PostConstruct
+	public void init()
+	{
+		System.out.println(" init called");
+	}
+	
+	public void draw()
+	{
+		System.out.println(" Traingle draw "+ triangleName);
+		System.out.println(point.getX()+" "+point.getY());
+
+	} 
+	
+	@PreDestroy
+	public void destroy()
+	{
+		System.out.println(" destroy called ");
+	}
+}
+========================================================================================================================
+
+Spring MVC:
+
+
+web.xml in webinf: only view resolver is configured
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>SpringMVCDemo</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  
+  <servlet>
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>		
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<url-pattern>*.obj</url-pattern>
+	</servlet-mapping>
+	
+</web-app>
+
+dispatcher-servlet.xml in webinf:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<context:component-scan base-package="com.test.controller"/>
+	
+	<bean 
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/" />	<!-- jsp file address in webcontent -->
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+</beans>
+
+
+controller:
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class HelloController {
+	
+	@RequestMapping("/hello")
+	public ModelAndView sayHello()
+	{
+		String str="Hello Welcome to Spring MVC";	//Data is ready
+		ModelAndView model= new ModelAndView();	//Model object is created
+		model.setViewName("success");	//view object with view name success
+		model.addObject("message", str);	// Used to add data to the model
+		return(model);
+	}
+	
+}
+
+jsp in web content:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1>${message}</h1>
+</body>
+</html>
+===========================================================================================================================
+
+using constructor of ModelView:
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class HelloController {
+	
+	@RequestMapping("/hello")
+	public ModelAndView sayHello()
+	{
+		String str="Hello Welcome to Spring MVC";	//Data is ready
+		ModelAndView model= new ModelAndView("success","message",str);	//Model object is created
+		return(model);
+	}
+	
+}
+======================================================================================================
+
+Using method model where Front controller will give us model and we just have to add data to it:
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class HelloController {
+	
+	@RequestMapping("/hello")
+	public ModelAndView sayHello()
+	{
+		String str="Hello Welcome to Spring MVC";	//Data is ready
+		ModelAndView model= new ModelAndView("success","message",str);	//Model object is created
+		return(model);
+	}
+	@RequestMapping("/hello1")
+	public String sayHello1(Model model)
+	{
+		model.addAttribute("message", "Hello from HELLO1");
+		return("success");
+	}
+	
+}
+=====================================================================================================================
+REquest Mapping in class level: avoids if two controllers have same method names:
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+@RequestMapping("/alpha")
+public class HelloController {
+	
+	@RequestMapping("/hello")
+	public ModelAndView sayHello()
+	{
+		String str="Hello Welcome to Spring MVC";	//Data is ready
+		ModelAndView model= new ModelAndView("success","message",str);	//Model object is created
+		return(model);
+	}
+	@RequestMapping("/hello1")
+	public String sayHello1(Model model)
+	{
+		model.addAttribute("message", "Hello from HELLO1");
+		return("success");
+	}
+}
+=========================================================================================================================
+To pass query parameter to method using @RequestParam :Give msg in URL after running
+
+http://localhost:8081/SpringMVCDemo/alpha/hello.obj?msg=Welcome
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+@RequestMapping("/alpha")
+public class HelloController {
+	
+	@RequestMapping("/hello")
+	public ModelAndView sayHello(@RequestParam("msg") String msg)
+	{
+		String str=msg;	//Data is ready
+		ModelAndView model= new ModelAndView("success","message",str);	//Model object is created
+		return(model);
+	}
+	@RequestMapping("/hello1")
+	public String sayHello1(Model model)
+	{
+		model.addAttribute("message", "Hello from HELLO1");
+		return("success");
+	}
+}
+
+=============================================================================================================================
+Default method value is taken as GET, to make it POST:
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class HelloController {
+	
+	@RequestMapping("/show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	@RequestMapping("/hello")
+	public ModelAndView sayHello(@RequestParam("msg") String msg)
+	{
+		String str=msg;	//Data is ready
+		ModelAndView model= new ModelAndView("success","message",str);	//Model object is created
+		return(model);
+	}
+	@RequestMapping(value="/hello1",method=RequestMethod.POST)
+	public String sayHello1(Model model)
+	{
+		model.addAttribute("message", "Hello from HELLO1");
+		return("success");
+	}
+}
+
+index.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1> INDEX PAGE </h1>
+<form action="hello1.obj" method="post">
+<input type="submit" value="Submit"/>
+</form>
+</body>
+</html>
+========================================================================================================================
+
+Add employee using spring mvc:
+
+EmployeeBean:
+
+package com.test.bean;
+
+public class EmployeeBean {
+	
+	private int employeeId;
+	private String employeeName;
+	
+	public EmployeeBean() {
+		super();
+	}
+	
+	public EmployeeBean(int employeeId, String employeeName) {
+		super();
+		this.employeeId = employeeId;
+		this.employeeName = employeeName;
+	}
+
+	public int getEmployeeId() {
+		return employeeId;
+	}
+	public void setEmployeeId(int employeeId) {
+		this.employeeId = employeeId;
+	}
+	public String getEmployeeName() {
+		return employeeName;
+	}
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+		
+}
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class EmployeeController {
+	
+	@RequestMapping("show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	@RequestMapping(value="addemployee", method=RequestMethod.POST)
+	public ModelAndView addEmployee(@RequestParam("employeeId") int empid, @RequestParam("employeeName") String empname)
+	{
+		ModelAndView model = new ModelAndView();
+		model.setViewName("success");
+		model.addObject("id", empid);
+		model.addObject("name", empname);
+		return(model);
+		
+	}
+}
+
+
+index.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1> EMPLOYEE DETAILS </h1>
+<form action="addemployee.obj" method="post">
+Enter Employee ID: <input type="text" name="employeeId" size="10" />
+<br>
+Enter Employee Name: <input type="text" name="employeeName" size="10" />
+<br>
+<input type="submit" value="Submit"/>
+</form>
+</body>
+</html>
+
+success.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1> EMPLOYEE ID = ${id}</h1>
+<h2> EMPLOYEE NAME = ${name}</h2>
+</body>
+</html>
+====================================================================================================================
+Giving bean object n insert values and mapping object to model:
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.test.bean.EmployeeBean;
+
+@Controller
+public class EmployeeController {
+	
+	@RequestMapping("show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	@RequestMapping(value="addemployee", method=RequestMethod.POST)
+	public ModelAndView addEmployee(@RequestParam("employeeId") int empid, @RequestParam("employeeName") String empname)
+	{
+		ModelAndView model = new ModelAndView();
+		EmployeeBean bean = new EmployeeBean();
+		bean.setEmployeeId(empid);
+		bean.setEmployeeName(empname);
+		
+		model.setViewName("success");
+		model.addObject("emp", bean);
+		
+		return(model);
+		
+	}
+}
+
+success.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1> EMPLOYEE ID = ${emp.employeeId}</h1>
+<h2> EMPLOYEE NAME = ${emp.employeeName}</h2>
+</body>
+</html>
+==================================================================================================================================
+
+To add employees without using setters and bean object: using @ModelAttribute instead of RequestParam (It works only if 
+name of input in jsp is same as field name in bean)
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.test.bean.EmployeeBean;
+
+@Controller
+public class EmployeeController {
+	
+	@RequestMapping("show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	@RequestMapping(value="addemployee", method=RequestMethod.POST)
+	public ModelAndView addEmployee(@ModelAttribute("emp") EmployeeBean bean )
+	{
+		ModelAndView model = new ModelAndView();
+		
+		model.setViewName("success");
+		model.addObject("emp", bean);
+		
+		return(model);
+		
+	}
+}
+
+======================================================================================================================
+
+Using Model object and attribute created by Spring:
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+
+import com.test.bean.EmployeeBean;
+
+@Controller
+public class EmployeeController {
+	
+	@RequestMapping("show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	@RequestMapping(value="addemployee", method=RequestMethod.POST)
+	public String addEmployee(@ModelAttribute("emp") EmployeeBean bean, Model model )
+	{
+		
+		return("success");
+		
+	}
+}
+
+=======================================================================================================================
+
+If binding is not proper like giving char for empId, spring corrects it by adding BindingResult which gives what is the 
+error as Binding Failed:
+
+package com.test.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+
+
+import com.test.bean.EmployeeBean;
+
+@Controller
+public class EmployeeController {
+	
+	@RequestMapping("show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	@RequestMapping(value="addemployee", method=RequestMethod.POST)
+	public String addEmployee(@ModelAttribute("emp") EmployeeBean bean,BindingResult result, Model model )
+	{
+		if(result.hasErrors())
+		{
+			model.addAttribute("message", result);
+			return("error");
+		}
+		return("success");
+		
+	}
+}
+
+error.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1>${message}</h1>
+</body>
+</html>
+=========================================================================================================================
+Using view all method:
+
+package com.test.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+
+
+import org.springframework.web.servlet.ModelAndView;
+
+import com.test.bean.EmployeeBean;
+
+@Controller
+public class EmployeeController {
+	
+	@RequestMapping("show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	@RequestMapping(value="addemployee", method=RequestMethod.POST)
+	public String addEmployee(@ModelAttribute("emp") EmployeeBean bean,BindingResult result, Model model )
+	{
+		if(result.hasErrors())
+		{
+			model.addAttribute("message", result);
+			return("error");
+		}
+		return("success");
+		
+	}
+	
+	@RequestMapping("viewAll")
+	public ModelAndView viewAllEmployees()
+	{
+		List<EmployeeBean> list = new ArrayList<EmployeeBean>();
+		EmployeeBean e1 = new EmployeeBean(1001, "Shruthi");
+		EmployeeBean e2 = new EmployeeBean(1002, "Akshay");
+		EmployeeBean e3 = new EmployeeBean(1003, "Swathi");
+		list.add(e1);
+		list.add(e2);
+		list.add(e3);
+		
+		ModelAndView model = new ModelAndView();
+		model.setViewName("viewall");
+		model.addObject("list", list);
+		
+		return(model);
+		
+	}
+}
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1> EMPLOYEE DETAILS </h1>
+<form action="addemployee.obj" method="post">
+Enter Employee ID: <input type="text" name="employeeId" size="10" />
+<br>
+Enter Employee Name: <input type="text" name="employeeName" size="10" />
+<br>
+<input type="submit" value="Submit"/>
+</form>
+<a href="viewAll.obj"> View All Employees</a>
+</body>
+</html>
+
+
+viewall.jsp:
+
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+ <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<table>
+<tr>
+	<th>EMPLOYEE ID</th>
+	<th>EMPLOYEE NAME</th>
+</tr>
+<c:forEach var="list" items="${list}">
+<tr>
+	<td>${list.employeeId}</td>
+	<td>${list.employeeName}</td>
+</tr>
+</c:forEach>
+</table>
+</body>
+</html>
+
+index.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1> EMPLOYEE DETAILS </h1>
+<form action="addemployee.obj" method="post">
+Enter Employee ID: <input type="text" name="employeeId" size="10" />
+<br>
+Enter Employee Name: <input type="text" name="employeeName" size="10" />
+<br>
+<input type="submit" value="Submit"/>
+</form>
+<a href="viewAll.obj"> View All Employees</a>
+</body>
+</html>
+========================================================================================================================
+
+Using update method:
+
+package com.test.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+
+
+import org.springframework.web.servlet.ModelAndView;
+
+import com.test.bean.EmployeeBean;
+
+@Controller
+public class EmployeeController {
+	
+	@RequestMapping("show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	
+	@RequestMapping("update")
+	public ModelAndView updateEmployee(@ModelAttribute("emp") EmployeeBean bean,BindingResult result, Model model )
+	{
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("update");
+		mv.addObject("emp", bean);
+		return(mv);
+	}
+	@RequestMapping(value="addemployee", method=RequestMethod.POST)
+	public String addEmployee(@ModelAttribute("emp") EmployeeBean bean,BindingResult result, Model model )
+	{
+		if(result.hasErrors())
+		{
+			model.addAttribute("message", result);
+			return("error");
+		}
+		return("success");
+		
+	}
+	
+	@RequestMapping("viewAll")
+	public ModelAndView viewAllEmployees()
+	{
+		List<EmployeeBean> list = new ArrayList<EmployeeBean>();
+		EmployeeBean e1 = new EmployeeBean(1001, "Shruthi");
+		EmployeeBean e2 = new EmployeeBean(1002, "Akshay");
+		EmployeeBean e3 = new EmployeeBean(1003, "Swathi");
+		list.add(e1);
+		list.add(e2);
+		list.add(e3);
+		
+		ModelAndView model = new ModelAndView();
+		model.setViewName("viewall");
+		model.addObject("list", list);
+		
+		return(model);
+		
+	}
+}
+
+viewall.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+ <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<table>
+<tr>
+	<th>EMPLOYEE ID</th>
+	<th>EMPLOYEE NAME</th>
+</tr>
+<c:forEach var="list" items="${list}">
+<tr>
+	<td>${list.employeeId}</td>
+	<td>${list.employeeName}</td>
+	<td><a href="update.obj?employeeId=${list.employeeId} &employeeName=${list.employeeName}">Update</a></td>
+</tr>
+</c:forEach>
+</table>
+</body>
+</html>
+
+update.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<form action="updateemployee">
+Employee Id = <input type="text" name="employeeId" value="${emp.employeeId}"/>
+Employee Name = <input type="text" name="employeeName" value="${emp.employeeName}"/>
+<input type="submit" name="Submit"/>
+</form>
+</body>
+</html>
+
+========================================================================================================================
+
+Using Spring Form instead of normal html form:
+
+package com.test.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+
+
+import org.springframework.web.servlet.ModelAndView;
+
+import com.test.bean.EmployeeBean;
+
+@Controller
+public class EmployeeController {
+	
+	@RequestMapping("show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	
+	@RequestMapping("update")
+	public ModelAndView updateEmployee(@ModelAttribute("emp") EmployeeBean bean,BindingResult result, Model model )
+	{
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("updateemp");
+		mv.addObject("emp", bean);
+		return(mv);
+	}
+	@RequestMapping(value="addemployee", method=RequestMethod.POST)
+	public String addEmployee(@ModelAttribute("emp") EmployeeBean bean,BindingResult result, Model model )
+	{
+		if(result.hasErrors())
+		{
+			model.addAttribute("message", result);
+			return("error");
+		}
+		return("success");
+		
+	}
+	
+	@RequestMapping("viewAll")
+	public ModelAndView viewAllEmployees()
+	{
+		List<EmployeeBean> list = new ArrayList<EmployeeBean>();
+		EmployeeBean e1 = new EmployeeBean(1001, "Shruthi");
+		EmployeeBean e2 = new EmployeeBean(1002, "Akshay");
+		EmployeeBean e3 = new EmployeeBean(1003, "Swathi");
+		list.add(e1);
+		list.add(e2);
+		list.add(e3);
+		
+		ModelAndView model = new ModelAndView();
+		model.setViewName("viewall");
+		model.addObject("list", list);
+		
+		return(model);
+		
+	}
+}
+
+updateemp.jsp:
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+   <%@taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<sf:form action="updateemployee.obj" method="get" modelAttribute="emp">
+Employee ID = <sf:input path="employeeId"/>
+<br>
+Employee Name = <sf:input path="employeeName"/>
+<br>
+<input type="submit" value="Submit" />
+</sf:form>
+</body>
+</html>
+=========================================================================================================================
+
+JSR-303 is used to validate a field in bean above field declaration:
+
+EmployeeBean:
+
+package com.test.bean;
+
+import javax.validation.constraints.Size;
+
+public class EmployeeBean {
+	
+	private int employeeId;
+	@Size(min=2,max=5,message="Name should contain min 2 and max 5 characters")
+	private String employeeName;
+	
+	public EmployeeBean() {
+		super();
+	}
+	
+	public EmployeeBean(int employeeId, String employeeName) {
+		super();
+		this.employeeId = employeeId;
+		this.employeeName = employeeName;
+	}
+
+	public int getEmployeeId() {
+		return employeeId;
+	}
+	public void setEmployeeId(int employeeId) {
+		this.employeeId = employeeId;
+	}
+	public String getEmployeeName() {
+		return employeeName;
+	}
+	public void setEmployeeName(String employeeName) {
+		this.employeeName = employeeName;
+	}
+		
+}
+
+Add @Valid for EmployeeBean in update method parameter in Employee Controller:
+package com.test.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+
+
+import org.springframework.web.servlet.ModelAndView;
+
+import com.test.bean.EmployeeBean;
+
+@Controller
+public class EmployeeController {
+	
+	@RequestMapping("show")
+	public String showHomePage()
+	{
+		return("index");
+	}
+	
+	@RequestMapping("update")
+	public ModelAndView updateEmployee(@ModelAttribute("emp") @Valid EmployeeBean bean,BindingResult result, Model model )
+	{
+		ModelAndView mv = new ModelAndView();
+		if(result.hasErrors())
+		{
+			mv.setViewName("updateemp");
+			mv.addObject("emp", bean);
+		}
+		else
+		{
+			mv.setViewName("updateemp");
+			mv.addObject("emp", bean);
+		}
+		return(mv);
+	}
+	@RequestMapping(value="addemployee", method=RequestMethod.POST)
+	public String addEmployee(@ModelAttribute("emp") EmployeeBean bean,BindingResult result, Model model )
+	{
+		if(result.hasErrors())
+		{
+			model.addAttribute("message", result);
+			return("error");
+		}
+		return("success");
+		
+	}
+	
+	@RequestMapping("viewAll")
+	public ModelAndView viewAllEmployees()
+	{
+		List<EmployeeBean> list = new ArrayList<EmployeeBean>();
+		EmployeeBean e1 = new EmployeeBean(1001, "Shruthi");
+		EmployeeBean e2 = new EmployeeBean(1002, "Akshay");
+		EmployeeBean e3 = new EmployeeBean(1003, "Swathi");
+		list.add(e1);
+		list.add(e2);
+		list.add(e3);
+		
+		ModelAndView model = new ModelAndView();
+		model.setViewName("viewall");
+		model.addObject("list", list);
+		
+		return(model);
+		
+	}
+}
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+   <%@taglib uri="http://www.springframework.org/tags/form" prefix="sf" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<sf:form action="updateemployee.obj" method="get" modelAttribute="emp">
+Employee ID = <sf:input path="employeeId"/>
+<br>
+Employee Name = <sf:input path="employeeName"/>
+				<sf:errors path="employeeName"></sf:errors>
+<br>
+<input type="submit" value="Submit" />
+</sf:form>
+</body>
+</html>
+
+dispatcher-servlet.xml:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+	<bean id="myBeansValidator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+	
+	<mvc:annotation-driven validator="myBeansValidator" />
+
+	<context:component-scan base-package="com.test.controller"/>
+	
+	<bean 
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/" />	<!-- jsp file address in webcontent -->
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+</beans>
+
+==============================================================================================================================================================
+
+Using ContextLoaderListener ie, contextConfigLocation:in web.xml(this is used to configure multiple xml files)
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>SpringMVCDemo</display-name>
+  <welcome-file-list>
+    <welcome-file>show.obj</welcome-file>
+  </welcome-file-list>
+  <context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+  
+  <servlet>
+  
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>		
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>dispatcher</servlet-name>
+		<url-pattern>*.obj</url-pattern>
+	</servlet-mapping>
+	
+</web-app>
+==========================================================================================================================
